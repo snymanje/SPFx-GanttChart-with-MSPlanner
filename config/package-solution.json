@@ -3,7 +3,7 @@
   "solution": {
     "name": "project-management-web-part-client-side-solution",
     "id": "d5e54f4b-5ccc-405c-b66f-ed58765745e9",
-    "version": "1.0.0.7",
+    "version": "1.0.0.8",
     "includeClientSideAssets": true,
     "skipFeatureDeployment": true,
     "isDomainIsolated": false,
@@ -13,7 +13,34 @@
       "privacyUrl": "",
       "termsOfUseUrl": "",
       "mpnId": ""
-    }
+    },
+    "webApiPermissionRequests": [{
+        "resource": "Windows Azure Active Directory",
+        "scope": "User.Read.All"
+      },
+      {
+        "resource": "Microsoft Graph",
+        "scope": "User.ReadBasic.All"
+      }, {
+        "resource": "Microsoft Graph",
+        "scope": "Group.Read.All"
+      }, {
+        "resource": "Microsoft Graph",
+        "scope": "User.Read.All"
+      }, {
+        "resource": "Microsoft Graph",
+        "scope": "Directory.Read.All"
+      }, {
+        "resource": "Microsoft Graph",
+        "scope": "GroupMember.ReadWrite.All"
+      }, {
+        "resource": "Microsoft Graph",
+        "scope": "Group.ReadWrite.All"
+      }, {
+        "resource": "Microsoft Graph",
+        "scope": "Directory.ReadWrite.All"
+      }
+    ]
   },
   "paths": {
     "zippedPackage": "solution/project-management-web-part.sppkg"

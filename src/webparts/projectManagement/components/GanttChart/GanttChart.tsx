@@ -1,126 +1,104 @@
 import * as React from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import Button from "react-bootstrap/Button";
 
 // Import pnpjs
 import { sp } from "@pnp/sp/presets/all";
+import "@pnp/graph/presets/all";
+import { graph } from "@pnp/graph";
+import "@pnp/graph/planner";
 import { dateDiffInDays } from "../../utils/days";
 import Chartt from "./chart";
+import { Groups } from "@pnp/graph/presets/all";
 
 const Chart = () => {
   const [data, setData] = React.useState([]);
-  const [range, setRange] = React.useState(18);
+
+  let today: Date = new Date();
+  let day = 1000 * 60 * 60 * 24;
+  // Set to 00:00:00:000 today
+  today.setUTCHours(0);
+  today.setUTCMinutes(0);
+  today.setUTCSeconds(0);
+  today.setUTCMilliseconds(0);
+  const newToday = today.getTime();
 
   React.useEffect(() => {
-    let today: Date = new Date();
-    // Set to 00:00:00:000 today
-    today.setUTCHours(0);
-    today.setUTCMinutes(0);
-    today.setUTCSeconds(0);
-    today.setUTCMilliseconds(0);
-    const newToday = today.getTime();
-    const day = 1000 * 60 * 60 * 24;
+    console.log("Start: ", new Date());
+    const plans = async () => {
+      const tasks = await graph.planner.plans
+        .getById("eIgWi8Rmw0-DKaO6-AMaZ2UAHW3O")
+        .tasks();
 
-    const getItems = async () => {
-      const items = await sp.web.lists
-        .getByTitle("IntelligentAutomationPM")
-        .items.select(
-          "Id",
-          "Title",
-          "AssignedTo/ID",
-          "AssignedTo/Title",
-          "AssignedTo/EMail",
-          "Progress",
-          "Completed",
-          "DueDate",
-          "StartDate",
-          "Priority",
-          "Description",
-          "Category",
-          "Dependency/Title",
-          "Dependency/ID"
-        )
-        .expand("AssignedTo", "Dependency")
-        .getAll();
+      const allTasks = tasks.map(async (task) => {
+        const {
+          assignments,
+          completedDateTime,
+          startDateTime,
+          dueDateTime,
+          title,
+          bucketId
+        } = task;
+        const primaryOwner = Object.keys(assignments)[
+          Object.keys(assignments).length - 1
+        ];
+
+        const { displayName, mail } = await graph.users.getById(primaryOwner)();
+        const { name: bucketName } = await graph.planner.buckets.getById(bucketId)();
+
+        return {
+          assignedTo: displayName,
+          bucket: bucketName,  
+          parent: displayName,
+          start:
+            newToday +
+            dateDiffInDays(new Date(), new Date(startDateTime)) * day,
+          end:
+            newToday + dateDiffInDays(new Date(), new Date(dueDateTime)) * day,
+          id: title,
+          name: title,
+        };
+      });
+      const results = await Promise.all(allTasks);
 
       const tempdata = [];
-      const owners = items.map((owner) => owner.AssignedTo.Title);
+      const owners = results.map((owner) => owner.assignedTo);
       new Set(owners).forEach((owner) => {
-        const { AssignedTo } = items.find((item) =>
-          item.AssignedTo.Title === owner ? item : undefined
-        );
+        /*  const { assignedTo } = results.find((item) =>
+          item.assignedTo === owner ? item : undefined
+        ); */
 
         tempdata.push({
           name: owner,
           id: owner,
           owner: owner,
-          assignee: AssignedTo.EMail.replace(".", "_").replace(".", "_").replace("@", "_"),
+          /*   assignee: assignedEmail.replaceAll(".", "_").replace("@", "_"), */
         });
       });
 
-      const tasks = [];
-      items.map((item) =>
-        tasks.push({
-          name: item.Title,
-          parent: item.AssignedTo.Title,
-          id: item.Title,
-          dependency: item.Dependency ? item.Dependency.Title : undefined,
-          start:
-            newToday +
-            dateDiffInDays(new Date(), new Date(item.StartDate)) * day,
-          end:
-            newToday + dateDiffInDays(new Date(), new Date(item.DueDate)) * day,
-          completed: {
-            amount: item.Completed / 100 || 0,
-          },
-          assignee: item.AssignedTo.EMail.replace(".", "_").replace(".", "_").replace(
-            "@",
-            "_"
-          ),
-          owner: item.AssignedTo.Title,
-        })
-      );
-
-      const sortedArray = [...data, ...tempdata, ...tasks];
+      const sortedArray = [...data, ...tempdata, ...results];
       const sorted = sortedArray.sort((a, b) => {
         // Sorting high to low
         return a.name < b.name ? -1 : 1;
         // Sorting low to high
         // return a.price > b.price;
       });
-      setData(sorted);
+      
+      const finaldata = sorted.filter(data => {
+        return data.bucket !== "To do" && data.bucket !== "Completed"
+      })
+      console.log(finaldata);
+      setData(finaldata);
+
+      //return results;
     };
 
-    getItems();
+    plans();
   }, []);
 
-  const updateRange = (days) => {
-    setRange(days) 
-  }
-
-/*   React.useEffect(() => {
-   console.log('New range', range);
-}, [range]); */
- 
   return (
-    <div
-      style={{ width: "100%" }} >
-      <Chartt data={data} dateRange={range} />
+    <div>
+      <Chartt data={data} day={day} today={newToday} />
     </div>
-    
   );
 };
 
 export default Chart;
-
-  {/* <div style={{ width: "100%", height: "100%", margin: "1em auto" }} >
-      <Button variant="primary" size="sm" onClick={() => updateRange(14)}>
-        2w
-      </Button>{" "}
-      <Button variant="secondary" size="sm" onClick={() => updateRange(30)}>
-        1m
-      </Button>{" "}
-      <Button variant="secondary" size="sm" onClick={() => updateRange(90)}>
-        3m
-      </Button>      
-    </div> */}

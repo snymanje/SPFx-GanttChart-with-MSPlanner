@@ -7,193 +7,133 @@ import highchartsGantt from "highcharts/modules/gantt";
 
 highchartsGantt(Highcharts);
 
-const Chart = ({ data, dateRange }) => {
- // const [options, setOptions] = React.useState({});
-  console.log("new char range in chat comp", dateRange);
-
-  let today: Date = new Date();
-  // Set to 00:00:00:000 today
-  today.setUTCHours(0);
-  today.setUTCMinutes(0);
-  today.setUTCSeconds(0);
-  today.setUTCMilliseconds(0);
-  const newToday = today.getTime();
-  const day = 1000 * 60 * 60 * 24;
-
+const Chart = ({ data, day, today }) => {
   // Utility functions
   let dateFormat = Highcharts.dateFormat;
   let defined = Highcharts.defined;
-  let isObject = Highcharts.isObject;
+  // isObject = Highcharts.isObject,
   let reduce = Highcharts.reduce;
 
   const options = {
-      series: [
-        {
-          name: "Resource Manager",
-          data: data,
-          /* dataLabels: [
-            {
-              enabled: true,
-              format:
-                '<div style="width: 25px; height: 25px; overflow: hidden; border-radius: 50%; margin-left: -35px">' +
-                '<img src="https://tfgonline-my.sharepoint.com/User%20Photos/Profile%20Pictures/{point.assignee}_MThumb.jpg" ' +
+    series: [
+      {
+        name: "Resource Manager",
+        data: data,
+        /* dataLabels: [{
+            enabled: true,
+            format: '<div style="width: 20px; height: 20px; overflow: hidden; border-radius: 50%; margin-left: -25px">' +
+                '<img src="https://www.highcharts.com/images/employees2014/{point.assignee}.jpg" ' +
                 'style="width: 30px; margin-left: -5px; margin-top: -2px"></div>',
-              useHTML: true,
-              align: "left",
-            },
-          ], */
-        },
-      ],
-      tooltip: {
-        pointFormatter: function () {
-          var point = this,
-            format = "%e. %b",
-            options = point.options,
-            completed = options.completed,
-            amount = isObject(completed) ? completed.amount : completed,
-            status = (amount || 0) * 100 + "%",
-            lines;
+            useHTML: true,
+            align: 'left'
+        }] */
+      },
+    ],
+    tooltip: {
+      pointFormatter: function () {
+        var point = this,
+          format = "%e. %b",
+          options = point.options,
+          //completed = options.completed,
+          //amount = isObject(completed) ? completed.amount : completed,
+          //status = (amount || 0) * 100 + "%",
+          lines;
 
-          lines = [
-            {
-              value: point.name,
-              style: "font-weight: bold;",
-            },
-            {
-              title: "Start",
-              value: dateFormat(format, point.start),
-            },
-            {
-              visible: !options.milestone,
-              title: "End",
-              value: dateFormat(format, point.end),
-            },
-            {
-              title: "Completed",
-              value: status,
-            },
-            {
-              title: "Owner",
-              value: options.owner || "unassigned",
-            },
-          ];
+        lines = [
+          {
+            value: point.name,
+            style: "font-weight: bold;",
+          },
+          {
+            title: "Start",
+            value: dateFormat(format, point.start),
+          },
+          {
+            visible: !options.milestone,
+            title: "End",
+            value: dateFormat(format, point.end),
+          },
+          /*         {
+          title: "Completed",
+          value: status,
+        }, */
+          {
+            title: "Owner",
+            value: options.owner || "unassigned",
+          },
+        ];
 
-          return reduce(
-            lines,
-            function (str, line) {
-              var s = "",
-                style = defined(line.style) ? line.style : "font-size: 0.8em;";
-              if (line.visible !== false) {
-                s =
-                  '<span style="' +
-                  style +
-                  '">' +
-                  (defined(line.title) ? line.title + ": " : "") +
-                  (defined(line.value) ? line.value : "") +
-                  "</span><br/>";
-              }
-              return str + s;
-            },
-            ""
-          );
-        },
+        return reduce(
+          lines,
+          function (str, line) {
+            var s = "",
+              style = defined(line.style) ? line.style : "font-size: 0.8em;";
+            if (line.visible !== false) {
+              s =
+                '<span style="' +
+                style +
+                '">' +
+                (defined(line.title) ? line.title + ": " : "") +
+                (defined(line.value) ? line.value : "") +
+                "</span><br/>";
+            }
+            return str + s;
+          },
+          ""
+        );
       },
-      title: {
-        text: "Intelligent Automation Project Management",
+    },
+    title: {
+      text: "Intelligent Automation Project Management",
+    },
+    xAxis: {
+      currentDateIndicator: true,
+      min: today - 3 * day,
+      max: today + 12 * day,     
+      scrollbar: {
+          enabled: true
       },
-      xAxis: {
-        currentDateIndicator: true,
-        min: newToday - 2 * day,
-        max: newToday + 18 * day,
-      },
-    }
+      
+    },
+    /* rangeSelector: {
+        enabled: true,
+        selected: 0
+    }, */
+    chart: {
+      events: {
+        render() {
+          let chart = this;
 
-  /* React.useEffect(() => {
-    setOptions({
-      series: [
-        {
-          name: "Resource Manager",
-          data: data,
-          dataLabels: [
-            {
-              enabled: true,
-              format:
-                '<div style="width: 25px; height: 25px; overflow: hidden; border-radius: 50%; margin-left: -35px">' +
-                '<img src="https://tfgonline-my.sharepoint.com/User%20Photos/Profile%20Pictures/{point.assignee}_MThumb.jpg" ' +
-                'style="width: 30px; margin-left: -5px; margin-top: -2px"></div>',
-              useHTML: true,
-              align: "left",
-            },
-          ],
-        },
-      ],
-      tooltip: {
-        pointFormatter: function () {
-          var point = this,
-            format = "%e. %b",
-            options = point.options,
-            completed = options.completed,
-            amount = isObject(completed) ? completed.amount : completed,
-            status = (amount || 0) * 100 + "%",
-            lines;
-
-          lines = [
-            {
-              value: point.name,
-              style: "font-weight: bold;",
-            },
-            {
-              title: "Start",
-              value: dateFormat(format, point.start),
-            },
-            {
-              visible: !options.milestone,
-              title: "End",
-              value: dateFormat(format, point.end),
-            },
-            {
-              title: "Completed",
-              value: status,
-            },
-            {
-              title: "Owner",
-              value: options.owner || "unassigned",
-            },
-          ];
-
-          return reduce(
-            lines,
-            function (str, line) {
-              var s = "",
-                style = defined(line.style) ? line.style : "font-size: 0.8em;";
-              if (line.visible !== false) {
-                s =
-                  '<span style="' +
-                  style +
-                  '">' +
-                  (defined(line.title) ? line.title + ": " : "") +
-                  (defined(line.value) ? line.value : "") +
-                  "</span><br/>";
-              }
-              return str + s;
-            },
-            ""
-          );
-        },
-      },
-      title: {
-        text: "Intelligent Automation Project Management",
-      },
-      xAxis: {
-        currentDateIndicator: true,
-        min: newToday - 2 * day,
-        max: newToday + 18 * day,
-      },
-    });
-  }, [dateRange]); */
+          chart.series[0].points.forEach(point => {
+            if (point.collapsed) {
+              chart.series[0].points.forEach(p => {
+                if (p.parent === point.id) {
+                  if (p.visible) {
+                    point.update({
+                      collapsed: false
+                    })
+                  }
+                }
+              })
+            } else if (point.collapsed === false) {
+              chart.series[0].points.forEach(p => {
+                if (p.parent === point.id) {
+                  if (!p.visible) {
+                    point.update({
+                      collapsed: true
+                    })
+                  }
+                }
+              })
+            }
+          })
+        }
+      }
+    },
+  };
 
   return (
-    <div>
+    <div style={{ width: "100%", height: "100%", margin: "1em auto" }}>
       <HighchartsReact
         highcharts={Highcharts}
         constructorType={"ganttChart"}

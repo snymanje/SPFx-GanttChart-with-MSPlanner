@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
-import { sp } from "@pnp/sp/presets/all";
+import { setup as pnpSetup } from '@pnp/common';
 import { Version } from '@microsoft/sp-core-library';
 import {
   IPropertyPaneConfiguration,
@@ -19,24 +19,12 @@ export interface IProjectManagementWebPartProps {
 
 export default class ProjectManagementWebPart extends BaseClientSideWebPart<IProjectManagementWebPartProps> {
 
-  protected onInit(): Promise<void> {
-
-    return super.onInit().then(_ => {
-
-      // other init code may be present
-
-      sp.setup({
-        spfxContext: this.context,
-        sp: {
-          headers: {
-            Accept: "application/json;odata=verbose",
-          },
-          baseUrl:
-            "https://tfgonline.sharepoint.com/sites/SharePointFrameworkTesting",
-        },
-      });
-    });
-  }
+  public onInit(): Promise<void> {
+	pnpSetup({
+	  spfxContext: this.context
+	});
+	return Promise.resolve();
+}
 
   public render(): void {
     const element: React.ReactElement<IProjectManagementProps> = React.createElement(

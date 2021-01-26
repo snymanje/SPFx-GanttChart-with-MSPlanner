@@ -14,11 +14,16 @@
     "test": "gulp test"
   },
   "dependencies": {
+    "@microsoft/microsoft-graph-types": "^1.28.0",
     "@microsoft/sp-core-library": "1.11.0",
     "@microsoft/sp-lodash-subset": "1.11.0",
     "@microsoft/sp-office-ui-fabric-core": "1.11.0",
     "@microsoft/sp-property-pane": "1.11.0",
     "@microsoft/sp-webpart-base": "1.11.0",
+    "@pnp/common": "^2.1.0",
+    "@pnp/graph": "^2.1.0",
+    "@pnp/logging": "^2.1.0",
+    "@pnp/odata": "^2.1.0",
     "@pnp/sp": "^2.1.0",
     "@types/highcharts": "^7.0.0",
     "@types/react-bootstrap": "^0.32.25",
