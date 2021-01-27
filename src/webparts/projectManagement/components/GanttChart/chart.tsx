@@ -7,7 +7,7 @@ import highchartsGantt from "highcharts/modules/gantt";
 
 highchartsGantt(Highcharts);
 
-const Chart = ({ data, day, today }) => {
+const Chart = ({ data, day, today, title }) => {
   // Utility functions
   let dateFormat = Highcharts.dateFormat;
   let defined = Highcharts.defined;
@@ -84,7 +84,7 @@ const Chart = ({ data, day, today }) => {
       },
     },
     title: {
-      text: "Intelligent Automation Project Management",
+      text: title,
     },
     xAxis: {
       currentDateIndicator: true,
@@ -95,11 +95,7 @@ const Chart = ({ data, day, today }) => {
       },
       
     },
-    /* rangeSelector: {
-        enabled: true,
-        selected: 0
-    }, */
-    chart: {
+/*     chart: {
       events: {
         render() {
           let chart = this;
@@ -129,7 +125,7 @@ const Chart = ({ data, day, today }) => {
           })
         }
       }
-    },
+    }, */
   };
 
   return (
