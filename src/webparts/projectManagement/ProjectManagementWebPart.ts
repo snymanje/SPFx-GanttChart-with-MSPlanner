@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
+
 import { setup as pnpSetup } from '@pnp/common';
 import { Version } from '@microsoft/sp-core-library';
 import {
@@ -9,7 +10,6 @@ import {
 import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 
 import * as strings from 'ProjectManagementWebPartStrings';
-import ProjectManagement from './components/ProjectManagement';
 import { IProjectManagementProps } from './components/IProjectManagementProps';
 import Chart from './components/GanttChart/GanttChart';
 

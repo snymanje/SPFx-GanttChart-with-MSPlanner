@@ -1,8 +1,17 @@
 import * as React from "react";
-import 'bootstrap/dist/css/bootstrap.min.css';
-import Spinner from 'react-bootstrap/Spinner'
-import Button from 'react-bootstrap/Button'
-import Alert from 'react-bootstrap/Alert'
+
+import {
+  MessageBarButton,
+  Link,
+  Stack,
+  StackItem,
+  MessageBar,
+  MessageBarType,
+  Label,
+  Spinner,
+  ChoiceGroup,
+  IStackProps,
+} from 'office-ui-fabric-react';
 
 import Chartt from "./chart";
 import { GetPlannerdata } from "../../utils/getPlannerData";
@@ -26,7 +35,7 @@ const Chart = () => {
     (async () => {
       try {
         // throw line below is for testing purposes only.
-        //throw new Error("Error occured")
+        // throw new Error("Error occured")
         const plannerData = await GetPlannerdata(
           "eIgWi8Rmw0-DKaO6-AMaZ2UAHW3O",
           data,
@@ -45,38 +54,30 @@ const Chart = () => {
 
   return (
     <div>
-      {error ? (
-        <div className="d-flex justify-content-center">
-          <Alert variant="danger">
-            <Alert.Heading>Oh snap! You got an error!</Alert.Heading>
-            <p>
-              {error}
-            </p>
-          </Alert>
+          {error ? (
+            <div className="">
+              <MessageBar
+                messageBarType={MessageBarType.error}
+                isMultiline={false}
+              >
+                { error }
+              </MessageBar>
+            </div>
+          ) : loading ? (
+            <div style={{ marginTop: "5rem", marginBottom: '5rem' }}>
+              <Spinner label="Loading data from Planner...please wait." ariaLive="assertive" labelPosition="right" />
+            </div>
+          ) : (
+            <div style={{ width: "100%", height: "100%", margin: "1em auto" }}>
+              <Chartt
+                data={data}
+                day={day}
+                today={today.getTime()}
+                title={"Intelligent Automation Project Management"}
+              />
+            </div>
+          )}
         </div>
-      ) : loading ? (
-        <div className="d-flex justify-content-center">
-          <Button variant="light" disabled>
-            <Spinner
-              as="span"
-              animation="grow"
-              size="sm"
-              role="status"
-              aria-hidden="true"
-              className="mr-2"
-            />
-            Loading data from Planner...please wait.
-          </Button>
-        </div>
-      ) : (
-        <Chartt
-          data={data}
-          day={day}
-          today={today.getTime()}
-          title={"Intelligent Automation Project Management"}
-        />
-      )}
-    </div>
   );
 };
 
