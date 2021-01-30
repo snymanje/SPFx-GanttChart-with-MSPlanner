@@ -23,9 +23,8 @@
       "webpack-env"
     ],
     "lib": [
-      "es6",
+      "es2016",
       "dom",
-      "ES2015.Collection"
     ]
   },
   "include": [

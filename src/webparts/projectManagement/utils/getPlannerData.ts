@@ -4,65 +4,73 @@ import "@pnp/graph/planner";
 
 import { dateDiffInDays } from "../utils/days";
 
-export const GetPlannerdata =  async (planId, data, day: number, today: number) => {
-      const tasks = await graph.planner.plans
-        .getById(planId)
-        .tasks();
+export const GetPlannerdata = async (
+  planId: string,
+  data,
+  day: number,
+  today: number,
+  excludedBuckets: string
+) => {
+  const tasks = await graph.planner.plans.getById(planId).tasks();
 
-      const allTasks = tasks.map(async (task) => {
-        const {
-          assignments,
-          startDateTime,
-          dueDateTime,
-          title,
-          bucketId
-        } = task;
-        const primaryOwner = Object.keys(assignments)[
-          Object.keys(assignments).length - 1
-        ];
+  const assignToLookup = {};
+  const bucketsLookup = {};
 
-        const { displayName } = await graph.users.getById(primaryOwner)();
-        const { name: bucketName } = await graph.planner.buckets.getById(bucketId)();
+  const allTasks = [];
+  for await (const task of tasks) {
+    const { assignments, startDateTime, dueDateTime, title, bucketId } = task;
+    const primaryOwnerId = Object.keys(assignments)[
+      Object.keys(assignments).length - 1
+    ];
 
-        return {
-          assignedTo: displayName,
-          bucket: bucketName,  
-          parent: displayName,
-          start:
-            today +
-            dateDiffInDays(new Date(), new Date(startDateTime)) * day,
-          end:
-            today + dateDiffInDays(new Date(), new Date(dueDateTime)) * day,
-          id: title,
-          name: title,
-          owner: displayName
-        };
-      });
-      const results = await Promise.all(allTasks);
+    if (!assignToLookup[primaryOwnerId]) {
+      const { displayName } = await graph.users.getById(primaryOwnerId)();
+      assignToLookup[primaryOwnerId] = { displayName: displayName };
+    }
 
-      const tempdata = [];
-      const owners = results.map((owner) => owner.assignedTo);
-      new Set(owners).forEach((owner) => {
-        /*  const { assignedTo } = results.find((item) =>
-          item.assignedTo === owner ? item : undefined
-        ); */
+    if (!bucketsLookup[bucketId]) {
+      const { name: bucketName } = await graph.planner.buckets.getById(
+        bucketId
+      )();
+      bucketsLookup[bucketId] = { bucketName };
+    }
 
-        tempdata.push({
-          name: owner,
-          id: owner,
-          owner: owner,
-          /*   assignee: assignedEmail.replaceAll(".", "_").replace("@", "_"), */
-        });
-      });
+    const { displayName } = assignToLookup[primaryOwnerId] || "unknown owner";
+    const { bucketName } = bucketsLookup[bucketId] || "unknown bucket";
 
-      const sortedArray = [...data, ...tempdata, ...results];
-      const sorted = sortedArray.sort((a, b) => {
-        // Sorting A to Z
-        return a.name < b.name ? -1 : 1;
-      });
-      
-      const finaldata = sorted.filter(data => {
-        return data.bucket !== "To do" && data.bucket !== "Completed"
-      })
-      return finaldata;
-}
+    allTasks.push({
+      assignedTo: displayName,
+      bucket: bucketName,
+      parent: displayName,
+      start: today + dateDiffInDays(new Date(), new Date(startDateTime)) * day,
+      end: today + dateDiffInDays(new Date(), new Date(dueDateTime)) * day,
+      id: title,
+      name: title,
+      owner: displayName,
+    });
+  }
+
+  const assignToList = [];
+  const owners = allTasks.map((owner) => owner.assignedTo);
+  new Set(owners).forEach((owner) => {
+    assignToList.push({
+      name: owner,
+      id: owner,
+      owner: owner,
+    });
+  });
+
+  const sortedArr = [...data, ...assignToList, ...allTasks].sort((a, b) =>
+    a.name < b.name ? -1 : 1
+  );
+
+  const filteredBuckets = sortedArr.filter((data) => {
+    const exlBuckets = excludedBuckets
+      .split(",")
+      .map((bucket) => bucket.trim());
+
+    return !exlBuckets.includes(data.bucket);
+  });
+
+  return filteredBuckets;
+};

@@ -1,38 +1,42 @@
-import * as React from 'react';
-import * as ReactDom from 'react-dom';
+import * as React from "react";
+import * as ReactDom from "react-dom";
 
-import { setup as pnpSetup } from '@pnp/common';
-import { Version } from '@microsoft/sp-core-library';
+import { setup as pnpSetup } from "@pnp/common";
+import { Version } from "@microsoft/sp-core-library";
 import {
   IPropertyPaneConfiguration,
-  PropertyPaneTextField
-} from '@microsoft/sp-property-pane';
-import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
+  PropertyPaneTextField,
+} from "@microsoft/sp-property-pane";
+import { BaseClientSideWebPart } from "@microsoft/sp-webpart-base";
 
-import * as strings from 'ProjectManagementWebPartStrings';
-import { IProjectManagementProps } from './components/IProjectManagementProps';
-import Chart from './components/GanttChart/GanttChart';
+// import * as strings from "ProjectManagementWebPartStrings";
+import { IProjectManagementProps } from "./components/IProjectManagementProps";
+import Chart from "./components/GanttChart/GanttChart";
 
 export interface IProjectManagementWebPartProps {
-  description: string;
+  title: string;
+  range: number;
+  plannerId: string;
+  excludedBuckets: string;
 }
 
 export default class ProjectManagementWebPart extends BaseClientSideWebPart<IProjectManagementWebPartProps> {
-
   public onInit(): Promise<void> {
-	pnpSetup({
-	  spfxContext: this.context
-	});
-	return Promise.resolve();
-}
+    pnpSetup({
+      spfxContext: this.context,
+    });
+    return Promise.resolve();
+  }
 
   public render(): void {
     const element: React.ReactElement<IProjectManagementProps> = React.createElement(
-      /* ProjectManagement,
+      Chart,
       {
-        description: this.properties.description
-      } */
-      Chart
+        title: this.properties.title,
+        range: this.properties.range,
+        plannerId: this.properties.plannerId,
+        excludedBuckets: this.properties.excludedBuckets,
+      }
     );
 
     ReactDom.render(element, this.domElement);
@@ -43,7 +47,7 @@ export default class ProjectManagementWebPart extends BaseClientSideWebPart<IPro
   }
 
   protected get dataVersion(): Version {
-    return Version.parse('1.0');
+    return Version.parse("1.0");
   }
 
   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
@@ -51,20 +55,29 @@ export default class ProjectManagementWebPart extends BaseClientSideWebPart<IPro
       pages: [
         {
           header: {
-            description: strings.PropertyPaneDescription
+            description: "Gantt Chart Properties",
           },
           groups: [
             {
-              groupName: strings.BasicGroupName,
+              groupName: "Chart Properties",
               groupFields: [
-                PropertyPaneTextField('description', {
-                  label: strings.DescriptionFieldLabel
-                })
-              ]
-            }
-          ]
-        }
-      ]
+                PropertyPaneTextField("title", {
+                  label: "Name",
+                }),
+                PropertyPaneTextField("range", {
+                  label: "Default range in days",
+                }),
+                PropertyPaneTextField("plannerId", {
+                  label: "Your MS Planner Plan Id",
+                }),
+                PropertyPaneTextField("excludedBuckets", {
+                  label: "Excluded Buckets seperated by comma",
+                }),
+              ],
+            },
+          ],
+        },
+      ],
     };
   }
 }

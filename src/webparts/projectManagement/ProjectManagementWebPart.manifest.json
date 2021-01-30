@@ -24,7 +24,10 @@
     },
     "officeFabricIconFontName": "CalendarWeek",
     "properties": {
-      "description": "MS Planner Gantt chart"
+      "title": "Your chart name",
+      "range": 12,
+      "plannerId": "",
+      "excludedBuckets": "To do, Completed"
     }
   }]
 }

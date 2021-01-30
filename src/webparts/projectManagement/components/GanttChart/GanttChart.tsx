@@ -1,22 +1,15 @@
 import * as React from "react";
 
 import {
-  MessageBarButton,
-  Link,
-  Stack,
-  StackItem,
   MessageBar,
   MessageBarType,
-  Label,
   Spinner,
-  ChoiceGroup,
-  IStackProps,
 } from 'office-ui-fabric-react';
 
 import Chartt from "./chart";
 import { GetPlannerdata } from "../../utils/getPlannerData";
 
-const Chart = () => {
+const Chart = ({ title, range, plannerId, excludedBuckets }) => {
   const [data, setData] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState(null);
@@ -37,15 +30,16 @@ const Chart = () => {
         // throw line below is for testing purposes only.
         // throw new Error("Error occured")
         const plannerData = await GetPlannerdata(
-          "eIgWi8Rmw0-DKaO6-AMaZ2UAHW3O",
+          plannerId,
           data,
           day,
-          today.getTime()
+          today.getTime(),
+          excludedBuckets
         );
         setData(plannerData);
         setLoading(false);
       } catch (err) {
-        setError(err.message);
+        plannerId ? setError(err.message) : setError("Please add your plan id to the property settings.")   
         console.log(err.message);
         setLoading(false);
       }
@@ -68,12 +62,13 @@ const Chart = () => {
               <Spinner label="Loading data from Planner...please wait." ariaLive="assertive" labelPosition="right" />
             </div>
           ) : (
-            <div style={{ width: "100%", height: "100%", margin: "1em auto" }}>
+            <div >
               <Chartt
+                range={range}
+                title={title}
                 data={data}
                 day={day}
                 today={today.getTime()}
-                title={"Intelligent Automation Project Management"}
               />
             </div>
           )}

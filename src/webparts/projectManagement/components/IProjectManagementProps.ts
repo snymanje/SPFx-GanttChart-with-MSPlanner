@@ -1,3 +1,3 @@
 export interface IProjectManagementProps {
-  description: string;
+  title: string;
 }

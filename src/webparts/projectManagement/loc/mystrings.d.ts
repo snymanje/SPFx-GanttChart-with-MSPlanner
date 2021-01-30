@@ -1,10 +1,10 @@
 declare interface IProjectManagementWebPartStrings {
   PropertyPaneDescription: string;
   BasicGroupName: string;
-  DescriptionFieldLabel: string;
+  TitleFieldLabel: string;
 }
 
-declare module 'ProjectManagementWebPartStrings' {
+declare module "ProjectManagementWebPartStrings" {
   const strings: IProjectManagementWebPartStrings;
   export = strings;
 }

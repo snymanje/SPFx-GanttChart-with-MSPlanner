@@ -7,7 +7,7 @@ import highchartsGantt from "highcharts/modules/gantt";
 
 highchartsGantt(Highcharts);
 
-const Chart = ({ data, day, today, title }) => {
+const Chart = ({ data, day, today, title, range }) => {
   // Utility functions
   let dateFormat = Highcharts.dateFormat;
   let defined = Highcharts.defined;
@@ -89,47 +89,15 @@ const Chart = ({ data, day, today, title }) => {
     xAxis: {
       currentDateIndicator: true,
       min: today - 3 * day,
-      max: today + 12 * day,     
+      max: today + range * day,
       scrollbar: {
-          enabled: true
+        enabled: true,
       },
-      
     },
-/*     chart: {
-      events: {
-        render() {
-          let chart = this;
-
-          chart.series[0].points.forEach(point => {
-            if (point.collapsed) {
-              chart.series[0].points.forEach(p => {
-                if (p.parent === point.id) {
-                  if (p.visible) {
-                    point.update({
-                      collapsed: false
-                    })
-                  }
-                }
-              })
-            } else if (point.collapsed === false) {
-              chart.series[0].points.forEach(p => {
-                if (p.parent === point.id) {
-                  if (!p.visible) {
-                    point.update({
-                      collapsed: true
-                    })
-                  }
-                }
-              })
-            }
-          })
-        }
-      }
-    }, */
   };
 
   return (
-    <div style={{ width: "100%", height: "100%", margin: "1em auto" }}>
+    <div style={{ width: "94%", height: "100%", margin: "1rem auto" }}>
       <HighchartsReact
         highcharts={Highcharts}
         constructorType={"ganttChart"}
