@@ -11,7 +11,6 @@ const Chart = ({ data, day, today, title, range }) => {
   // Utility functions
   let dateFormat = Highcharts.dateFormat;
   let defined = Highcharts.defined;
-  // isObject = Highcharts.isObject,
   let reduce = Highcharts.reduce;
 
   const options = {
@@ -19,25 +18,14 @@ const Chart = ({ data, day, today, title, range }) => {
       {
         name: "Resource Manager",
         data: data,
-        /* dataLabels: [{
-            enabled: true,
-            format: '<div style="width: 20px; height: 20px; overflow: hidden; border-radius: 50%; margin-left: -25px">' +
-                '<img src="https://www.highcharts.com/images/employees2014/{point.assignee}.jpg" ' +
-                'style="width: 30px; margin-left: -5px; margin-top: -2px"></div>',
-            useHTML: true,
-            align: 'left'
-        }] */
       },
     ],
     tooltip: {
       pointFormatter: function () {
-        var point = this,
-          format = "%e. %b",
-          options = point.options,
-          //completed = options.completed,
-          //amount = isObject(completed) ? completed.amount : completed,
-          //status = (amount || 0) * 100 + "%",
-          lines;
+        let point = this;
+        let format = "%e. %b";
+        let options = point.options;
+        let lines;
 
         lines = [
           {
@@ -53,10 +41,6 @@ const Chart = ({ data, day, today, title, range }) => {
             title: "End",
             value: dateFormat(format, point.end),
           },
-          /*         {
-          title: "Completed",
-          value: status,
-        }, */
           {
             title: "Owner",
             value: options.owner || "unassigned",
@@ -107,4 +91,4 @@ const Chart = ({ data, day, today, title, range }) => {
   );
 };
 
-export default Chart;
+export { Chart };

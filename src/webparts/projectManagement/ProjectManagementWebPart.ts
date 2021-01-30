@@ -9,9 +9,7 @@ import {
 } from "@microsoft/sp-property-pane";
 import { BaseClientSideWebPart } from "@microsoft/sp-webpart-base";
 
-// import * as strings from "ProjectManagementWebPartStrings";
-import { IProjectManagementProps } from "./components/IProjectManagementProps";
-import Chart from "./components/GanttChart/GanttChart";
+import { Index } from "./components/Index";
 
 export interface IProjectManagementWebPartProps {
   title: string;
@@ -29,8 +27,8 @@ export default class ProjectManagementWebPart extends BaseClientSideWebPart<IPro
   }
 
   public render(): void {
-    const element: React.ReactElement<IProjectManagementProps> = React.createElement(
-      Chart,
+    const element: React.ReactElement<IProjectManagementWebPartProps> = React.createElement(
+      Index,
       {
         title: this.properties.title,
         range: this.properties.range,
@@ -46,6 +44,7 @@ export default class ProjectManagementWebPart extends BaseClientSideWebPart<IPro
     ReactDom.unmountComponentAtNode(this.domElement);
   }
 
+  // @ts-ignore
   protected get dataVersion(): Version {
     return Version.parse("1.0");
   }

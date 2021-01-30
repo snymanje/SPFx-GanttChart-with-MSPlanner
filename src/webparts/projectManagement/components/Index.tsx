@@ -6,10 +6,10 @@ import {
   Spinner,
 } from 'office-ui-fabric-react';
 
-import Chartt from "./chart";
-import { GetPlannerdata } from "../../utils/getPlannerData";
+import { Chart } from "./Chart";
+import { GetPlannerdata } from "../utils/getPlannerData";
 
-const Chart = ({ title, range, plannerId, excludedBuckets }) => {
+const Index = ({ title, range, plannerId, excludedBuckets }) => {
   const [data, setData] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState(null);
@@ -63,7 +63,7 @@ const Chart = ({ title, range, plannerId, excludedBuckets }) => {
             </div>
           ) : (
             <div >
-              <Chartt
+              <Chart
                 range={range}
                 title={title}
                 data={data}
@@ -76,4 +76,4 @@ const Chart = ({ title, range, plannerId, excludedBuckets }) => {
   );
 };
 
-export default Chart;
+export { Index };
