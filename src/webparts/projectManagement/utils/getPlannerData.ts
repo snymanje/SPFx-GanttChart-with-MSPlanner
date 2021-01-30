@@ -4,9 +4,11 @@ import "@pnp/graph/planner";
 
 import { dateDiffInDays } from "../utils/days";
 
+import { IPlannerData } from "../components/Index";
+
 export const GetPlannerdata = async (
   planId: string,
-  data,
+  data: IPlannerData[],
   day: number,
   today: number,
   excludedBuckets: string
@@ -16,7 +18,7 @@ export const GetPlannerdata = async (
   const assignToLookup = {};
   const bucketsLookup = {};
 
-  const allTasks = [];
+  const allTasks: IPlannerData[] = [];
   for await (const task of tasks) {
     const { assignments, startDateTime, dueDateTime, title, bucketId } = task;
     const primaryOwnerId = Object.keys(assignments)[
@@ -61,9 +63,11 @@ export const GetPlannerdata = async (
     });
   });
 
-  const sortedArr = [...data, ...assignToList, ...allTasks].sort((a, b) =>
-    a.name < b.name ? -1 : 1
-  );
+  const sortedArr: IPlannerData[] = [
+    ...data,
+    ...assignToList,
+    ...allTasks,
+  ].sort((a, b) => (a.name < b.name ? -1 : 1));
 
   const filteredBuckets = sortedArr.filter((data) => {
     const exlBuckets = excludedBuckets

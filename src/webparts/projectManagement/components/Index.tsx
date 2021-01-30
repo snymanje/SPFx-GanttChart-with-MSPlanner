@@ -9,8 +9,20 @@ import {
 import { Chart } from "./Chart";
 import { GetPlannerdata } from "../utils/getPlannerData";
 
+export interface IPlannerData {
+  assignedTo: string;
+  bucket: string;
+  parent: string;
+  start: number,
+  end: number,
+  id: string,
+  name: string,
+  owner: string,
+  collapsed: boolean,
+}
+
 const Index = ({ title, range, plannerId, excludedBuckets }) => {
-  const [data, setData] = React.useState([]);
+  const [data, setData] = React.useState<IPlannerData[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState(null);
 
@@ -29,7 +41,7 @@ const Index = ({ title, range, plannerId, excludedBuckets }) => {
       try {
         // throw line below is for testing purposes only.
         // throw new Error("Error occured")
-        const plannerData = await GetPlannerdata(
+        const plannerData: IPlannerData[] = await GetPlannerdata(
           plannerId,
           data,
           day,
