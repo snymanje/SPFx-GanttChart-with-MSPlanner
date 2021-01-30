@@ -47,6 +47,7 @@ export const GetPlannerdata = async (
       id: title,
       name: title,
       owner: displayName,
+      collapsed: false,
     });
   }
 
