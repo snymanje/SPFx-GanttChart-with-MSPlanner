@@ -44,8 +44,12 @@ export const GetPlannerdata = async (
       assignedTo: displayName,
       bucket: bucketName,
       parent: displayName,
-      start: today + dateDiffInDays(new Date(), new Date(startDateTime)) * day,
-      end: today + dateDiffInDays(new Date(), new Date(dueDateTime)) * day,
+      start: startDateTime
+        ? today + dateDiffInDays(new Date(), new Date(startDateTime)) * day
+        : today,
+      end: dueDateTime
+        ? today + dateDiffInDays(new Date(), new Date(dueDateTime)) * day
+        : today + 3 * day,
       id: title,
       name: title,
       owner: displayName,
