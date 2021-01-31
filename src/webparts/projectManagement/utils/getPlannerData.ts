@@ -15,8 +15,8 @@ export const GetPlannerdata = async (
 ) => {
   const tasks = await graph.planner.plans.getById(planId).tasks();
 
-  const assignToLookup = {};
-  const bucketsLookup = {};
+  const assignToLookup = JSON.parse(localStorage.getItem("assignToList")) || {};
+  const bucketsLookup = JSON.parse(localStorage.getItem("bucketList")) || {};
 
   const allTasks: IPlannerData[] = [];
   for await (const task of tasks) {
@@ -52,6 +52,9 @@ export const GetPlannerdata = async (
       collapsed: false,
     });
   }
+
+  localStorage.setItem("bucketList", JSON.stringify(bucketsLookup));
+  localStorage.setItem("assignToList", JSON.stringify(assignToLookup));
 
   const assignToList = [];
   const owners = allTasks.map((owner) => owner.assignedTo);
