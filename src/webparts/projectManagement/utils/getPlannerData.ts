@@ -48,7 +48,7 @@ export const GetPlannerdata = async (
         ? today + dateDiffInDays(new Date(), new Date(startDateTime)) * day
         : today,
       end: dueDateTime
-        ? today + dateDiffInDays(new Date(), new Date(dueDateTime)) * day
+        ? today + (dateDiffInDays(new Date(), new Date(dueDateTime)) + 1) * day
         : today + 3 * day,
       id: title,
       name: title,
